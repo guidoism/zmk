@@ -93,6 +93,7 @@ static inline int set_layer_state(uint8_t layer, bool state, bool momentary) {
     WRITE_BIT(_zmk_keymap_layer_state, layer, state);
     // Don't send state changes unless there was an actual change
     if (old_state != _zmk_keymap_layer_state) {
+        printk("GUIDO: layer %d, new state set: %d\n", layer, _zmk_keymap_layer_state);
         LOG_DBG("layer_changed: layer %d state %d", layer, state);
         WRITE_BIT(_zmk_keymap_layer_momentary, layer, momentary);
         ZMK_EVENT_RAISE(create_layer_state_changed(layer, state));

@@ -32,6 +32,7 @@ static zmk_mod_flags_t masked_modifiers = 0;
     {                                                                                              \
         keyboard_report.body.modifiers = (mods & ~masked_modifiers) | implicit_modifiers;          \
         LOG_DBG("Modifiers set to 0x%02X", keyboard_report.body.modifiers);                        \
+        printk("GUIDO: Modifiers set to 0x%02X\n", keyboard_report.body.modifiers);                \
     }
 
 #define GET_MODIFIERS (keyboard_report.body.modifiers)

@@ -438,7 +438,7 @@ config ZMK_LOGGING_MINIMAL
 if !ZMK_LOGGING_MINIMAL
 
 config ZMK_LOG_LEVEL
-    default 4
+    default 1
 
 endif
 
