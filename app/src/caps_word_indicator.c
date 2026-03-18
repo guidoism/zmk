@@ -16,7 +16,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 /* White at same brightness as layer indicators */
 #define CAPS_WORD_HUE 0
 #define CAPS_WORD_SAT 0
-#define CAPS_WORD_BRT CONFIG_ZMK_RGB_UNDERGLOW_BRT_START
+#define CAPS_WORD_BRT 50
 
 /* Restore default (green) when caps_word deactivates */
 #define DEFAULT_HUE CONFIG_ZMK_RGB_UNDERGLOW_HUE_START
