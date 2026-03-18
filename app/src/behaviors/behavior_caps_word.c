@@ -45,6 +45,7 @@ static void activate_caps_word(const struct device *dev) {
     struct behavior_caps_word_data *data = dev->data;
 
     data->active = true;
+    printk("GUIDO: caps_word active: 1\n");
     raise_caps_word_state_changed(true);
 }
 
@@ -52,6 +53,7 @@ static void deactivate_caps_word(const struct device *dev) {
     struct behavior_caps_word_data *data = dev->data;
 
     data->active = false;
+    printk("GUIDO: caps_word active: 0\n");
     raise_caps_word_state_changed(false);
 }
 
