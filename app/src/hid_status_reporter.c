@@ -28,6 +28,9 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
  *   byte 0: report ID (0x01 = status update)
  *   byte 1-2: layer state (16-bit bitset, little-endian)
  *   byte 3: flags (bit 0 = caps_word active)
+ *
+ * Reports are sent asynchronously via a work queue to avoid
+ * blocking the event system if the HID endpoint is busy.
  */
 
 #define REPORT_ID_STATUS 0x01
@@ -36,18 +39,25 @@ static uint8_t report_buf[CONFIG_RAW_HID_REPORT_SIZE];
 static uint32_t last_layer_state = 0;
 static bool caps_word_active = false;
 
-static void send_status_report(void) {
-    memset(report_buf, 0, sizeof(report_buf));
-    report_buf[0] = REPORT_ID_STATUS;
-    report_buf[1] = last_layer_state & 0xFF;
-    report_buf[2] = (last_layer_state >> 8) & 0xFF;
-    report_buf[3] = caps_word_active ? 0x01 : 0x00;
+static void send_status_work_handler(struct k_work *work) {
+    uint8_t buf[CONFIG_RAW_HID_REPORT_SIZE];
+    memset(buf, 0, sizeof(buf));
+    buf[0] = REPORT_ID_STATUS;
+    buf[1] = last_layer_state & 0xFF;
+    buf[2] = (last_layer_state >> 8) & 0xFF;
+    buf[3] = caps_word_active ? 0x01 : 0x00;
 
     raise_raw_hid_sent_event(
         (struct raw_hid_sent_event){
-            .data = report_buf,
-            .length = sizeof(report_buf),
+            .data = buf,
+            .length = sizeof(buf),
         });
+}
+
+static K_WORK_DEFINE(send_status_work, send_status_work_handler);
+
+static void send_status_report(void) {
+    k_work_submit(&send_status_work);
 }
 
 static int on_layer_state_changed(const zmk_event_t *eh) {
